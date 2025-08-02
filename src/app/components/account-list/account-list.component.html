@@ -1,0 +1,45 @@
+<div class="container">
+  <h1>ATM Account Management</h1>
+
+  <div class="actions">
+    <button (click)="createAccount()" [disabled]="loading" class="btn btn-primary">
+      {{ loading ? 'Creating...' : 'Create New Account' }}
+    </button>
+    <button (click)="goToTransfer()" class="btn btn-secondary">Transfer Funds</button>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <div *ngIf="success" class="success-message">
+    {{ success }}
+  </div>
+
+  <div *ngIf="loading && accounts.length === 0" class="loading">
+    Loading accounts...
+  </div>
+
+  <div *ngIf="!loading && accounts.length === 0" class="no-accounts">
+    No accounts found. Create your first account!
+  </div>
+
+  <div *ngIf="accounts.length > 0" class="accounts-grid">
+    <div *ngFor="let account of accounts" class="account-card">
+      <h3>Account: {{ account.id }}</h3>
+      <p class="balance">Balance: ${{ account.balance | number:'1.2-2' }}</p>
+      <div class="account-actions">
+        <button (click)="viewAccount(account.id)" class="btn btn-info">View Details</button>
+        <button (click)="viewTransactions(account.id)" class="btn btn-secondary">Transactions</button>
+        <button (click)="deleteAccount(account.id)" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Account Dialog -->
+  <app-create-account-dialog
+    *ngIf="showCreateDialog"
+    (balanceSubmitted)="onBalanceSubmitted($event)"
+    (dialogClosed)="onDialogClosed()">
+  </app-create-account-dialog>
+</div>
