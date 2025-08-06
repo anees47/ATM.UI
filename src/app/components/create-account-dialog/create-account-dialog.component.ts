@@ -10,15 +10,19 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './create-account-dialog.component.css'
 })
 export class CreateAccountDialogComponent {
-  @Output() balanceSubmitted = new EventEmitter<number>();
+  @Output() accountSubmitted = new EventEmitter<{name: string, initialBalance: number}>();
   @Output() dialogClosed = new EventEmitter<void>();
 
+  accountName: string = '';
   initialBalance: number = 0;
   showDialog = true;
 
   onSubmit(): void {
-    if (this.initialBalance >= 0) {
-      this.balanceSubmitted.emit(this.initialBalance);
+    if (this.accountName.trim() && this.initialBalance >= 0) {
+      this.accountSubmitted.emit({
+        name: this.accountName.trim(),
+        initialBalance: this.initialBalance
+      });
       this.showDialog = false;
     }
   }

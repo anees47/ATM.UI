@@ -7,7 +7,7 @@ import { Account } from '../models/account';
   providedIn: 'root'
 })
 export class AccountService {
-  private apiUrl = 'https://localhost:7096/api/account';
+  private apiUrl = 'http://localhost:5262/api/Account';
 
   constructor(private http: HttpClient) { }
 
@@ -22,27 +22,35 @@ export class AccountService {
   }
 
   // Create new account
-  createAccount(initialBalance?: number): Observable<any> {
-    return this.http.post(this.apiUrl, { initialBalance });
+  createAccount(name: string, initialBalance?: number): Observable<string> {
+    return this.http.post(this.apiUrl, { name, initialBalance }, {
+      responseType: 'text'
+    });
   }
 
   // Delete account
-  deleteAccount(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  deleteAccount(id: string): Observable<string> {
+    return this.http.delete(`${this.apiUrl}/${id}`, {
+      responseType: 'text'
+    });
   }
 
   // Deposit money
-  deposit(accountId: string, amount: number): Observable<any> {
+  deposit(accountId: string, amount: number): Observable<string> {
     const formData = new FormData();
     formData.append('amount', amount.toString());
-    return this.http.post(`${this.apiUrl}/${accountId}/deposit`, formData);
+    return this.http.post(`${this.apiUrl}/${accountId}/deposit`, formData, {
+      responseType: 'text'
+    });
   }
 
   // Withdraw money
-  withdraw(accountId: string, amount: number): Observable<any> {
+  withdraw(accountId: string, amount: number): Observable<string> {
     const formData = new FormData();
     formData.append('amount', amount.toString());
-    return this.http.post(`${this.apiUrl}/${accountId}/withdraw`, formData);
+    return this.http.post(`${this.apiUrl}/${accountId}/withdraw`, formData, {
+      responseType: 'text'
+    });
   }
 
   // Transfer money between accounts

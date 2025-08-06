@@ -7,7 +7,8 @@ import { Transaction } from '../models/transaction';
   providedIn: 'root'
 })
 export class TransactionService {
-  private apiUrl = 'https://localhost:7096/api/transaction';
+  private apiUrl = 'http://localhost:5262/api/transaction';
+  private accountApiUrl = 'http://localhost:5262/api/Account';
 
   constructor(private http: HttpClient) { }
 
@@ -19,5 +20,21 @@ export class TransactionService {
   // Get all transactions
   getAllTransactions(): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(this.apiUrl);
+  }
+
+  // Deposit money to account
+  deposit(accountId: string, amount: number): Observable<any> {
+    const formData = new FormData();
+    formData.append('amount', amount.toString());
+    
+    return this.http.post(`${this.accountApiUrl}/${accountId}/deposit`, formData);
+  }
+
+  // Withdraw money from account
+  withdraw(accountId: string, amount: number): Observable<any> {
+    const formData = new FormData();
+    formData.append('amount', amount.toString());
+    
+    return this.http.post(`${this.accountApiUrl}/${accountId}/withdraw`, formData);
   }
 }

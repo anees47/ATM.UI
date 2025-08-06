@@ -1,1 +1,62 @@
-<p>transaction-list works!</p>
+<div class="transaction-container">
+  <h2>Transaction History</h2>
+
+  @if (error) {
+    <div class="error-message">
+      {{ error }}
+    </div>
+  }
+
+  @if (loading) {
+    <div class="loading">
+      Loading transactions...
+    </div>
+  }
+
+  @if (!loading && transactions.length === 0 && !error) {
+    <div class="no-transactions">
+      No transactions found for this account.
+    </div>
+  }
+
+  @if (transactions.length > 0) {
+    <div class="table-container">
+      <table class="transaction-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>From Account</th>
+            <th>To Account</th>
+            <th>Action</th>
+            <th>Amount</th>
+            <th>Date & Time</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (transaction of transactions; track transaction.id; let i = $index) {
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td>{{ getFromAccount(transaction) }}</td>
+              <td>{{ getToAccount(transaction) }}</td>
+              <td>
+                <span class="action-badge action-{{ getTransactionAction(transaction).toLowerCase() }}">
+                  {{ getTransactionAction(transaction) }}
+                </span>
+              </td>
+              <td class="amount">
+                ${{ transaction.amount | number:'1.2-2' }}
+              </td>
+              <td>{{ transaction.timestamp | date:'short' }}</td>
+              <td>
+                <span class="status-badge {{ getStatusClass(transaction) }}">
+                  Success
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

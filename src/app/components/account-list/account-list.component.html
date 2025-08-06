@@ -8,38 +8,80 @@
     <button (click)="goToTransfer()" class="btn btn-secondary">Transfer Funds</button>
   </div>
 
-  <div *ngIf="error" class="error-message">
-    {{ error }}
-  </div>
-
-  <div *ngIf="success" class="success-message">
-    {{ success }}
-  </div>
-
-  <div *ngIf="loading && accounts.length === 0" class="loading">
-    Loading accounts...
-  </div>
-
-  <div *ngIf="!loading && accounts.length === 0" class="no-accounts">
-    No accounts found. Create your first account!
-  </div>
-
-  <div *ngIf="accounts.length > 0" class="accounts-grid">
-    <div *ngFor="let account of accounts" class="account-card">
-      <h3>Account: {{ account.id }}</h3>
-      <p class="balance">Balance: ${{ account.balance | number:'1.2-2' }}</p>
-      <div class="account-actions">
-        <button (click)="viewAccount(account.id)" class="btn btn-info">View Details</button>
-        <button (click)="viewTransactions(account.id)" class="btn btn-secondary">Transactions</button>
-        <button (click)="deleteAccount(account.id)" class="btn btn-danger">Delete</button>
-      </div>
+  @if (error) {
+    <div class="error-message">
+      {{ error }}
     </div>
-  </div>
+  }
+
+  @if (success) {
+    <div class="success-message">
+      {{ success }}
+    </div>
+  }
+
+  @if (loading && accounts.length === 0) {
+    <div class="loading">
+      Loading accounts...
+    </div>
+  }
+
+  @if (!loading && accounts.length === 0) {
+    <div class="no-accounts">
+      No accounts found. Create your first account!
+    </div>
+  }
+
+  @if (accounts.length > 0) {
+    <div class="accounts-grid">
+      @for (account of accounts; track account.id) {
+        <div class="account-card">
+          <div class="account-header">
+            <div class="account-info">
+              <span class="account-name">{{account.name}}</span>
+              <div class="account-number" [title]="'Account Number'">{{ formatAccountNumber(account.id) }}</div>
+            </div>
+            <button (click)="viewTransactions(account.id)" class="btn-icon" title="View Transactions">
+              ☰
+            </button>
+          </div>
+          <div class="balance-row">
+            <span class="balance-label">Balance</span>
+            <span class="balance-amount" [appCurrency]="account.balance" currencySymbol="$" [decimalPlaces]="2"></span>
+          </div>
+          <div class="account-actions">
+            <button (click)="deposit(account.id)" class="btn btn-success btn-small">Deposit</button>
+            <button (click)="withdraw(account.id)" class="btn btn-warning btn-small">Withdraw</button>
+            <button (click)="confirmDelete(account.id)" class="btn btn-danger btn-small">Delete</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
 
   <!-- Create Account Dialog -->
-  <app-create-account-dialog
-    *ngIf="showCreateDialog"
-    (balanceSubmitted)="onBalanceSubmitted($event)"
-    (dialogClosed)="onDialogClosed()">
-  </app-create-account-dialog>
+  @if (showCreateDialog) {
+    <app-create-account-dialog
+      (accountSubmitted)="onAccountSubmitted($event)"
+      (dialogClosed)="onDialogClosed()">
+    </app-create-account-dialog>
+  }
+
+  <!-- Transfer Dialog -->
+  @if (showTransferDialog) {
+    <app-transfer-form
+      (transferCompleted)="onTransferCompleted()"
+      (dialogClosed)="onTransferDialogClosed()">
+    </app-transfer-form>
+  }
+
+  <!-- Deposit/Withdraw Dialog -->
+  @if (showDepositWithdrawDialog) {
+    <app-deposit-withdraw-form
+      [operationType]="operationType"
+      [prefilledAccountId]="selectedAccountId"
+      (operationCompleted)="onDepositWithdrawCompleted()"
+      (dialogClosed)="onDepositWithdrawDialogClosed()">
+    </app-deposit-withdraw-form>
+  }
 </div>

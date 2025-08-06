@@ -1,9 +1,23 @@
-<div class="dialog-overlay" *ngIf="showDialog">
+@if (showDialog) {
+<div class="dialog-overlay">
   <div class="dialog-content">
     <h2>Create New Account</h2>
-    <p>Enter the initial balance for your new account:</p>
+    <p>Enter the account name and initial balance for your new account:</p>
 
     <form (ngSubmit)="onSubmit()" #accountForm="ngForm">
+      <div class="form-group">
+        <label for="accountName">Account Name:</label>
+        <input
+          type="text"
+          id="accountName"
+          name="accountName"
+          [(ngModel)]="accountName"
+          class="form-control"
+          required
+          #nameInput="ngModel"
+          placeholder="Enter account name">
+      </div>
+
       <div class="form-group">
         <label for="initialBalance">Initial Balance ($):</label>
         <input
@@ -22,10 +36,11 @@
         <button type="button" (click)="onCancel()" class="btn btn-secondary">
           Cancel
         </button>
-        <button type="submit" class="btn btn-primary" [disabled]="balanceInput.invalid">
+        <button type="submit" class="btn btn-primary" [disabled]="accountForm.invalid">
           Create Account
         </button>
       </div>
     </form>
   </div>
 </div>
+}
